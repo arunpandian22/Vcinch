@@ -9,15 +9,29 @@
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/rvUsersList"
         android:layout_width="0dp"
-        android:layout_height="match_parent"
+        android:layout_height="0dp"
         android:layout_marginEnd="8dp"
         android:layout_marginStart="@dimen/_7sdp"
-        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintBottom_toTopOf="@id/rlInternetStatus"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintVertical_bias="0.0">
     </androidx.recyclerview.widget.RecyclerView>
+    <RelativeLayout
+        android:id="@+id/rlEmptyState"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        android:layout_marginEnd="8dp"
+        android:visibility="gone"
+        android:layout_marginStart="@dimen/_7sdp"
+        app:layout_constraintBottom_toTopOf="@id/rlInternetStatus"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintVertical_bias="0.0">
+        <include layout="@layout/view_error_state"/>
+    </RelativeLayout>
     <ProgressBar
         android:id="@+id/pbUserList"
         android:layout_width="wrap_content"
@@ -32,6 +46,7 @@
         android:id="@+id/rlInternetStatus"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
+        android:visibility="gone"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintBottom_toBottomOf="parent">

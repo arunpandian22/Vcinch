@@ -2,15 +2,20 @@ package me.arun.vcinch.userModule.adapter;
 import android.util.Log;
 import androidx.annotation.NonNull;
 import androidx.paging.PageKeyedDataSource;
+
+import java.util.concurrent.TimeUnit;
+
 import io.reactivex.SingleObserver;
 import io.reactivex.android.schedulers.AndroidSchedulers;
 import io.reactivex.disposables.Disposable;
 import io.reactivex.schedulers.Schedulers;
 import me.arun.vcinch.VcinchApplication;
+import me.arun.vcinch.data.ModelEmptyErrorData;
 import me.arun.vcinch.entities.Datum;
 import me.arun.vcinch.entities.UserList;
 import me.arun.vcinch.localDb.AppDataBase;
 import me.arun.vcinch.service.Api;
+import me.arun.vcinch.utils.AppConstants;
 import me.arun.vcinch.utils.NetworkHelper;
 
 /**
@@ -35,37 +40,49 @@ public class ItemDataSource extends PageKeyedDataSource<Integer, Datum> {
     @Override
     public void loadInitial(@NonNull LoadInitialParams<Integer> params, @NonNull final LoadInitialCallback<Integer, Datum> callback) {
         Log.d(TAG, "loadInitial: ");
+
+        VcinchApplication.rxBus.send(new ModelEmptyErrorData(false,true,""));
         if (NetworkHelper.isNetworkAvailable(VcinchApplication.getContext())) {
-            Api.getInstance().getApiInterface().getUserList(endPoint, FIRST_PAGE)
+            Api.getInstance().getApiInterface().getUserList(endPoint, FIRST_PAGE).timeout(60, TimeUnit.SECONDS)
                     .subscribeOn(Schedulers.io()).observeOn(AndroidSchedulers.mainThread())
                     .subscribe(new SingleObserver<UserList>() {
                         @Override
                         public void onSubscribe(Disposable d) {
-    
+
+
                         }
-    
+
                         @Override
                         public void onSuccess(UserList userList) {
+
                             if (userList!= null) {
                                 callback.onResult(userList.getData(), null, FIRST_PAGE + 1);
                                 appDataBase.userListDao().insert(userList);
-                            }
+                                VcinchApplication.rxBus.send(new ModelEmptyErrorData(false,false,""));
+                            }else
+                                VcinchApplication.rxBus.send(new ModelEmptyErrorData(true,false, AppConstants.EMPTY_DATA));
                         }
-    
+
                         @Override
                         public void onError(Throwable e) {
                             Log.d(TAG, "onError: "+e.getMessage());
+                            VcinchApplication.rxBus.send(new ModelEmptyErrorData(true,false, AppConstants.API_FAILURE));
                         }
                     });
         } else {
             UserList userList=appDataBase.userListDao().getUsers(""+FIRST_PAGE);
-            if (userList!=null && userList.getData()!=null)
+            if (userList!=null && userList.getData()!=null) {
                 callback.onResult(userList.getData(), null, FIRST_PAGE + 1);
+                VcinchApplication.rxBus.send(new ModelEmptyErrorData(false,false,""));
+            }
             Log.d(TAG, "loadInitial: offline"+userList.getData().size());
             Log.d(TAG, "loadInitial: ");
 
         }
     }
+
+
+
 
     @Override
     public void loadBefore(@NonNull final LoadParams<Integer> params, @NonNull final LoadCallback<Integer, Datum> callback) {
@@ -78,9 +95,9 @@ public class ItemDataSource extends PageKeyedDataSource<Integer, Datum> {
                     .subscribe(new SingleObserver<UserList>() {
                         @Override
                         public void onSubscribe(Disposable d) {
-    
+
                         }
-    
+
                         @Override
                         public void onSuccess(UserList userList) {
 
@@ -89,7 +106,7 @@ public class ItemDataSource extends PageKeyedDataSource<Integer, Datum> {
                                 appDataBase.userListDao().insert(userList);
                             }
                         }
-    
+
                         @Override
                         public void onError(Throwable e) {
                             Log.d(TAG, "onError: "+e.getMessage());
@@ -98,8 +115,10 @@ public class ItemDataSource extends PageKeyedDataSource<Integer, Datum> {
         } else {
             Log.d(TAG, "loadBefore: offline");
             UserList userList=appDataBase.userListDao().getUsers(""+params.key);
-            if (userList!=null && userList.getData()!=null)
+            if (userList!=null && userList.getData()!=null) {
                 callback.onResult(userList.getData(), adjacentKey);
+                VcinchApplication.rxBus.send(new ModelEmptyErrorData(false,false,""));
+            }
 
         }
     }
@@ -134,8 +153,9 @@ public class ItemDataSource extends PageKeyedDataSource<Integer, Datum> {
         }else {
             Log.d(TAG, "loadAfter: offline");
             UserList userList=appDataBase.userListDao().getUsers(""+params.key);
-            if (userList!=null && userList.getData()!=null)
+            if (userList!=null && userList.getData()!=null) {
                 callback.onResult(userList.getData(), params.key + 1);
+            }
 
 
         }

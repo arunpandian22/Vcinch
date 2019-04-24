@@ -3,6 +3,7 @@ import android.content.Context;
 import android.util.Log;
 import com.jakewharton.retrofit2.adapter.rxjava2.RxJava2CallAdapterFactory;
 import java.io.File;
+import java.io.IOException;
 import java.util.concurrent.TimeUnit;
 
 import me.arun.vcinch.BuildConfig;
@@ -10,8 +11,11 @@ import me.arun.vcinch.VcinchApplication;
 import me.arun.vcinch.userModule.cachingUtils.GsonCacheableConverter;
 import me.arun.vcinch.userModule.cachingUtils.GsonResponseListener;
 import okhttp3.Cache;
+import okhttp3.Interceptor;
 import okhttp3.OkHttpClient;
+import okhttp3.Response;
 import retrofit2.Retrofit;
+import retrofit2.converter.gson.GsonConverterFactory;
 
 
 /**
@@ -19,7 +23,7 @@ import retrofit2.Retrofit;
  * arunsachin222@gmail.com
  * Chennai
  */
-public class Api  implements GsonResponseListener {
+public class Api {
     private static Api instance = null;
     Retrofit retrofit = null;
     // Keep your services here, build them in buildRetrofit method later
@@ -54,19 +58,18 @@ public class Api  implements GsonResponseListener {
 
         Log.d(TAG, "buildRetrofit: ");
         //setup cache
-        File httpCacheDirectory = new File(VcinchApplication.getContext().getCacheDir(), "responses");
-        int cacheSize = 10 * 1024 * 1024; // 10 MiB
-        Cache cache = new Cache(httpCacheDirectory, cacheSize);;
+
         OkHttpClient okHttpClient = new OkHttpClient.Builder()
-                .connectTimeout(60, TimeUnit.SECONDS)
-                .readTimeout(60, TimeUnit.SECONDS)
-                .writeTimeout(60, TimeUnit.SECONDS)
+                .connectTimeout(90, TimeUnit.SECONDS)
+                .readTimeout(90, TimeUnit.SECONDS)
+                .writeTimeout(90, TimeUnit.SECONDS)
+                .addNetworkInterceptor(new NetworkConnectionInterceptor())
                 .build();
 
         retrofit = new Retrofit.Builder()
                 .baseUrl(baseUrl)
                 .client(okHttpClient)
-                .addConverterFactory(GsonCacheableConverter.create(this))
+                .addConverterFactory(GsonConverterFactory.create())
                 .addCallAdapterFactory(RxJava2CallAdapterFactory.create()).build();
 
         this.apiInterface = retrofit.create(ApiInterface.class);
@@ -83,8 +86,5 @@ public class Api  implements GsonResponseListener {
         return this.apiInterface;
     }
 
-    @Override
-    public void onCacheableResponse(Class type, Object responseBody) {
 
-    }
 }

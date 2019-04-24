@@ -1,5 +1,4 @@
 package me.arun.vcinch.userModule;
-
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.lifecycle.Observer;
@@ -10,15 +9,14 @@ import androidx.recyclerview.widget.RecyclerView;
 import android.content.IntentFilter;
 import android.net.ConnectivityManager;
 import android.os.Bundle;
+import android.os.Handler;
 import android.util.Log;
 import android.view.View;
 import android.widget.ProgressBar;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
-
 import com.amitshekhar.DebugDB;
 import java.util.ArrayList;
-
 import io.reactivex.android.schedulers.AndroidSchedulers;
 import io.reactivex.disposables.CompositeDisposable;
 import io.reactivex.functions.Consumer;
@@ -45,6 +43,7 @@ public class UserListActivity extends AppCompatActivity implements UserListContr
     ArrayList<Datum> usersList = new ArrayList<>();
     CompositeDisposable compositeDisposable=new CompositeDisposable();
     NetworkChangeReceiver networkChangeReceiver=new NetworkChangeReceiver();
+    boolean isFromNointernet=false;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -62,10 +61,12 @@ public class UserListActivity extends AppCompatActivity implements UserListContr
             {
                 if (o instanceof ModelEmptyErrorData)
                 {
-
+                    if (((ModelEmptyErrorData) o).isProgressbar)
+                        isProgressBarShow(true);
+                    else
+                        isProgressBarShow(false);
                 }
                 else{
-
                 }
             }
         }));
@@ -85,6 +86,7 @@ public class UserListActivity extends AppCompatActivity implements UserListContr
 
     @Override
     public void refreshData() {
+        viewModel.refresh();
 
     }
 
@@ -152,11 +154,25 @@ public class UserListActivity extends AppCompatActivity implements UserListContr
     public void receiveBackOnline(boolean isOnline) {
         Log.d(TAG, "receiveBackOnline: " + isOnline);
         if (!isOnline) {
+            isFromNointernet=true;
+            rlInternetStatus.setVisibility(View.VISIBLE);
             rlInternetStatus.setBackgroundColor(getResources().getColor(R.color.offlineStripColor));
             tvInternetStatus.setText(getResources().getText(R.string.noInternetConnection));
         } else {
-            rlInternetStatus.setBackgroundColor(getResources().getColor(R.color.onlinebackStripColor));
-            tvInternetStatus.setText(getResources().getText(R.string.onlineIsBack));
+
+            if (isFromNointernet) {
+                rlInternetStatus.setVisibility(View.VISIBLE);
+                rlInternetStatus.setBackgroundColor(getResources().getColor(R.color.onlinebackStripColor));
+                tvInternetStatus.setText(getResources().getText(R.string.onlineIsBack));
+                new Handler().postDelayed(new Runnable() {
+                    @Override
+                    public void run() {
+                        rlInternetStatus.setVisibility(View.GONE);
+                        isFromNointernet=false;
+                    }
+                },5000);
+            }
+
         }
 
 

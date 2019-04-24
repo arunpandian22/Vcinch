@@ -40,4 +40,9 @@ public class UserListViewModel  extends AndroidViewModel {
         itemDataSource=new ItemDataSourceFactory();
         usersList = new LivePagedListBuilder<>(itemDataSource, config).build();
     }
+
+    public void refresh() {
+
+        itemDataSource.getItemLiveDataSource().getValue().invalidate();
+    }
 }
