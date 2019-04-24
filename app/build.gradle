@@ -1,6 +1,7 @@
 apply plugin: 'com.android.application'
 
 
+
 ext {
     majorVersion = 1
     minorVersion = 0
@@ -51,6 +52,10 @@ android {
             buildConfigField 'String', 'BASE_URL', props["baseUrl"]
         }
     }
+    compileOptions {
+        sourceCompatibility = '1.8'
+        targetCompatibility = '1.8'
+    }
 }
 
 dependencies {
@@ -85,6 +90,8 @@ dependencies {
     implementation 'android.arch.paging:runtime:1.0.1'
 
 
+
+
     // Dagger dependencies
     annotationProcessor "com.google.dagger:dagger-compiler:$daggerVersion"
     implementation "com.google.dagger:dagger:$daggerVersion"
@@ -92,6 +99,9 @@ dependencies {
     implementation "com.google.dagger:dagger-android-support:$daggerVersion"
     annotationProcessor "com.google.dagger:dagger-android-processor:$daggerVersion"
     implementation "com.intuit.sdp:sdp-android:$intuiteVersion"
+
+// for dbDebug
+    debugImplementation 'com.amitshekhar.android:debug-db:1.0.6'
 
     //View Model + Live Data
     implementation "androidx.lifecycle:lifecycle-extensions:$liveDataVersion"

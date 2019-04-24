@@ -1,3 +1,5 @@
 <resources>
     <string name="app_name">Vcinch</string>
+    <string name="noInternetConnection">No Internet Connection</string>
+    <string name="onlineIsBack">Online is back</string>
 </resources>
