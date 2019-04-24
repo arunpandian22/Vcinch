@@ -1,8 +1,7 @@
 package me.arun.vcinch.di.component;
 
 import dagger.Component;
-import io.reactivex.disposables.CompositeDisposable;
-import me.arun.vcinch.MainActivity;
+import me.arun.vcinch.userModule.UserListActivity;
 import me.arun.vcinch.di.PerActivity;
 import me.arun.vcinch.di.module.ActivityModule;
 
@@ -15,5 +14,5 @@ import me.arun.vcinch.di.module.ActivityModule;
 @Component(dependencies = ApplicationComponent.class, modules = ActivityModule.class)
 public interface ActivityComponent
 {
-    void inject(MainActivity mainActivity);
+    void inject(UserListActivity userListActivity);
 }

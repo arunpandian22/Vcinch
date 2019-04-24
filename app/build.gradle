@@ -29,6 +29,8 @@ ext {
 
 android {
     compileSdkVersion 28
+    Properties props = new Properties()
+    props.load(new FileInputStream(file(rootProject.file("gradle.properties"))))
     defaultConfig {
         applicationId "me.arun.vcinch"
         minSdkVersion 21
@@ -38,9 +40,15 @@ android {
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
     }
     buildTypes {
+        debug {
+            minifyEnabled false
+            buildConfigField 'String', 'BASE_URL', props["baseUrl"]
+        }
+
         release {
             minifyEnabled false
             proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
+            buildConfigField 'String', 'BASE_URL', props["baseUrl"]
         }
     }
 }
@@ -73,6 +81,10 @@ dependencies {
 
     implementation 'com.crashlytics.sdk.android:crashlytics:2.9.9'
 
+    //paging library
+    implementation 'android.arch.paging:runtime:1.0.1'
+
+
     // Dagger dependencies
     annotationProcessor "com.google.dagger:dagger-compiler:$daggerVersion"
     implementation "com.google.dagger:dagger:$daggerVersion"
@@ -87,4 +99,5 @@ dependencies {
     testImplementation 'junit:junit:4.12'
     androidTestImplementation 'androidx.test:runner:1.1.1'
     androidTestImplementation 'androidx.test.espresso:espresso-core:3.1.1'
+    implementation 'androidx.recyclerview:recyclerview:1.0.0'
 }
