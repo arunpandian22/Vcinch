@@ -25,17 +25,28 @@ import me.arun.vcinch.localDb.dao.UserListDao;
 @TypeConverters({Converters.class})
 public abstract class AppDataBase extends RoomDatabase {
     private static AppDataBase instance;
+
     public abstract UserListDao userListDao();
+
     public abstract UserDao userDao();
-    public static AppDataBase getAppDatabase(Context context)
-    {
-        if (instance == null)
-        {
+
+    public static AppDataBase getAppDatabase(Context context) {
+        if (instance == null) {
             instance = Room.databaseBuilder(context.getApplicationContext(),
                     AppDataBase.class,
                     "usersdb")
                     .allowMainThreadQueries()
                     .build();
+        }
+        return instance;
+    }
+
+
+    public static AppDataBase getTestAppDatabase(Context context) {
+
+        if (instance == null) {
+            instance = Room.inMemoryDatabaseBuilder(context, AppDataBase.class).allowMainThreadQueries().build();
+
         }
         return instance;
     }
