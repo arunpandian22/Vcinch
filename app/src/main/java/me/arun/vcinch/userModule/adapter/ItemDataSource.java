@@ -1,5 +1,7 @@
 package me.arun.vcinch.userModule.adapter;
+
 import android.util.Log;
+
 import androidx.annotation.NonNull;
 import androidx.paging.PageKeyedDataSource;
 
@@ -22,12 +24,15 @@ import me.arun.vcinch.utils.NetworkHelper;
  * Created by Arun Pandian M on 24/April/2019
  * arunsachin222@gmail.com
  * Chennai
+ * <p>
+ * Incremental data loader for page-keyed content, where requests return keys for next/previous
+ * pages.
  */
 public class ItemDataSource extends PageKeyedDataSource<Integer, Datum> {
 
-    String TAG="ItemDataSource";
+    String TAG = "ItemDataSource";
     //the size of a page that we want
-    public static final int PAGE_SIZE =3;
+    public static final int PAGE_SIZE = 3;
 
     //we will start from the first page which is 1
     private static final int FIRST_PAGE = 1;
@@ -35,13 +40,21 @@ public class ItemDataSource extends PageKeyedDataSource<Integer, Datum> {
     private static final String endPoint = "users";
 
     UserList userList;
-    AppDataBase appDataBase=VcinchApplication.getAppDataBase();
+    AppDataBase appDataBase = VcinchApplication.getAppDataBase();
 
+    /**
+     * A call back to load intial data for the paging adapter datasource factory
+     *
+     * @param params   Type of data used to query Value types out of the DataSource. here it has the page number
+     * @param callback it is always valid for a DataSource loading method that takes a callback to stash the
+     *                 callback and call it later. This enables DataSources to be fully asynchronous, and to handle
+     *                 temporary, recoverable error states (such as a network error that can be retried).
+     */
     @Override
     public void loadInitial(@NonNull LoadInitialParams<Integer> params, @NonNull final LoadInitialCallback<Integer, Datum> callback) {
         Log.d(TAG, "loadInitial: ");
 
-        VcinchApplication.rxBus.send(new ModelEmptyErrorData(false,true,""));
+        VcinchApplication.rxBus.send(new ModelEmptyErrorData(false, true, ""));
         if (NetworkHelper.isNetworkAvailable(VcinchApplication.getContext())) {
             Api.getInstance().getApiInterface().getUserList(endPoint, FIRST_PAGE).timeout(60, TimeUnit.SECONDS)
                     .subscribeOn(Schedulers.io()).observeOn(AndroidSchedulers.mainThread())
@@ -55,34 +68,42 @@ public class ItemDataSource extends PageKeyedDataSource<Integer, Datum> {
                         @Override
                         public void onSuccess(UserList userList) {
 
-                            if (userList!= null) {
+                            if (userList != null && userList.getData() != null && userList.getData().size() > 0) {
                                 callback.onResult(userList.getData(), null, FIRST_PAGE + 1);
                                 appDataBase.userListDao().insert(userList);
-                                VcinchApplication.rxBus.send(new ModelEmptyErrorData(false,false,""));
-                            }else
-                                VcinchApplication.rxBus.send(new ModelEmptyErrorData(true,false, AppConstants.EMPTY_DATA));
+                                VcinchApplication.rxBus.send(new ModelEmptyErrorData(false, false, ""));
+                            } else
+                                VcinchApplication.rxBus.send(new ModelEmptyErrorData(true, false, AppConstants.EMPTY_DATA));
                         }
 
                         @Override
                         public void onError(Throwable e) {
-                            Log.d(TAG, "onError: "+e.getMessage());
-                            VcinchApplication.rxBus.send(new ModelEmptyErrorData(true,false, AppConstants.API_FAILURE));
+                            Log.d(TAG, "onError: " + e.getMessage());
+                            VcinchApplication.rxBus.send(new ModelEmptyErrorData(true, false, AppConstants.API_FAILURE));
                         }
                     });
         } else {
-            UserList userList=appDataBase.userListDao().getUsers(""+FIRST_PAGE);
-            if (userList!=null && userList.getData()!=null) {
+            UserList userList = appDataBase.userListDao().getUsers("" + FIRST_PAGE);
+            if (userList != null && userList.getData() != null && userList.getData().size() > 0) {
                 callback.onResult(userList.getData(), null, FIRST_PAGE + 1);
-                VcinchApplication.rxBus.send(new ModelEmptyErrorData(false,false,""));
+                VcinchApplication.rxBus.send(new ModelEmptyErrorData(false, false, ""));
+            } else {
+                VcinchApplication.rxBus.send(new ModelEmptyErrorData(true, false, AppConstants.NO_OFFLINE));
             }
-            Log.d(TAG, "loadInitial: offline"+userList.getData().size());
-            Log.d(TAG, "loadInitial: ");
+
 
         }
     }
 
 
-
+    /**
+     * A call back to load befor data for the paging adapter datasource factory while doing the double side pagination.Prepend page with the key specified by {@link LoadParams#key LoadParams.key}.
+     *
+     * @param params   Type of data used to query Value types out of the DataSource. here it has the page number
+     * @param callback it is always valid for a DataSource loading method that takes a callback to stash the
+     *                 callback and call it later. This enables DataSources to be fully asynchronous, and to handle
+     *                 temporary, recoverable error states (such as a network error that can be retried).
+     */
 
     @Override
     public void loadBefore(@NonNull final LoadParams<Integer> params, @NonNull final LoadCallback<Integer, Datum> callback) {
@@ -101,7 +122,7 @@ public class ItemDataSource extends PageKeyedDataSource<Integer, Datum> {
                         @Override
                         public void onSuccess(UserList userList) {
 
-                            if (userList!= null) {
+                            if (userList != null) {
                                 callback.onResult(userList.getData(), adjacentKey);
                                 appDataBase.userListDao().insert(userList);
                             }
@@ -109,20 +130,28 @@ public class ItemDataSource extends PageKeyedDataSource<Integer, Datum> {
 
                         @Override
                         public void onError(Throwable e) {
-                            Log.d(TAG, "onError: "+e.getMessage());
+                            Log.d(TAG, "onError: " + e.getMessage());
                         }
                     });
         } else {
             Log.d(TAG, "loadBefore: offline");
-            UserList userList=appDataBase.userListDao().getUsers(""+params.key);
-            if (userList!=null && userList.getData()!=null) {
+            UserList userList = appDataBase.userListDao().getUsers("" + params.key);
+            if (userList != null && userList.getData() != null) {
                 callback.onResult(userList.getData(), adjacentKey);
-                VcinchApplication.rxBus.send(new ModelEmptyErrorData(false,false,""));
+                VcinchApplication.rxBus.send(new ModelEmptyErrorData(false, false, ""));
             }
 
         }
     }
 
+    /**
+     * A call back to load after data for the paging adapter datasource factory while doing the double side pagination.append page with the key specified by {@link LoadParams#key LoadParams.key}.
+     *
+     * @param params   Type of data used to query Value types out of the DataSource. here it has the page number
+     * @param callback it is always valid for a DataSource loading method that takes a callback to stash the
+     *                 callback and call it later. This enables DataSources to be fully asynchronous, and to handle
+     *                 temporary, recoverable error states (such as a network error that can be retried).
+     */
     @Override
     public void loadAfter(@NonNull final LoadParams<Integer> params, @NonNull final LoadCallback<Integer, Datum> callback) {
         Log.d(TAG, "loadAfter: ");
@@ -147,13 +176,13 @@ public class ItemDataSource extends PageKeyedDataSource<Integer, Datum> {
 
                         @Override
                         public void onError(Throwable e) {
-                            Log.d(TAG, "onError: "+e.getMessage());
+                            Log.d(TAG, "onError: " + e.getMessage());
                         }
                     });
-        }else {
+        } else {
             Log.d(TAG, "loadAfter: offline");
-            UserList userList=appDataBase.userListDao().getUsers(""+params.key);
-            if (userList!=null && userList.getData()!=null) {
+            UserList userList = appDataBase.userListDao().getUsers("" + params.key);
+            if (userList != null && userList.getData() != null) {
                 callback.onResult(userList.getData(), params.key + 1);
             }
 

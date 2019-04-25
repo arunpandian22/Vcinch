@@ -3,7 +3,8 @@
     package="me.arun.vcinch">
 
     <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
-    <uses-permission android:name="android.permission.INTERNET"/>
+    <uses-permission android:name="android.permission.INTERNET" />
+
     <application
         android:name=".VcinchApplication"
         android:allowBackup="true"
@@ -12,7 +13,12 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
-        <activity android:name=".userModule.UserListActivity"
+        <activity android:name=".splashScreen.SplashActivity"
+            android:theme="@style/SplashTheme">
+
+        </activity>
+        <activity
+            android:name=".userModule.UserListActivity"
             android:screenOrientation="portrait">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
@@ -20,7 +26,6 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-
 
         <receiver android:name=".utils.networkreceiver.NetworkChangeReceiver">
             <intent-filter>

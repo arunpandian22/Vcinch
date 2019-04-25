@@ -2,10 +2,12 @@
     <string name="app_name">Vcinch</string>
     <string name="noInternetConnection">No Internet Connection</string>
     <string name="onlineIsBack">Online is back</string>
-    <string name="oops">OOPS...!</string>
-    <string name="sorry">Sorry...!</string>
-    <string name="no_content_yet">No content yet...!</string>
-    <string name="pleaseJoin">Please join or create some content</string>
+    <string name="oops">OOPS…!</string>
+    <string name="sorry">Sorry…!</string>
+    <string name="no_content_yet">No content yet…!</string>
+    <string name="no_offline_yet">No offline data yet…!</string>
+    <string name="no_offline_data_des">Your offline data will be listed here :)</string>
+    <string name="pleaseJoin">Please join or create some content :)</string>
     <string name="noInterConnection">It seems no intenet connnection :(</string>
     <string name="something_went_wrong">Something went wrong :(</string>
 

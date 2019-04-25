@@ -15,6 +15,9 @@ import me.arun.vcinch.entities.UserList;
  * Chennai
  */
 
+/**
+ * A dao class to User table to manipulate the basic query
+ */
 @Dao
 public interface UserDao {
 

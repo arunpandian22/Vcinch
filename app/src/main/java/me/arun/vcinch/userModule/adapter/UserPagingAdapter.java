@@ -1,6 +1,7 @@
 package me.arun.vcinch.userModule.adapter;
 import android.annotation.SuppressLint;
 import android.content.Context;
+import android.text.TextUtils;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -16,7 +17,9 @@ import me.arun.vcinch.R;
 import me.arun.vcinch.entities.Datum;
 import me.arun.vcinch.utils.CircularImageView;
 
-
+/**
+ * A adapter class to paging adapter for the paging library
+ */
 public class UserPagingAdapter extends PagedListAdapter<Datum,UserPagingAdapter.UserViewHolder>
 {
    Context context;
@@ -48,7 +51,9 @@ public class UserPagingAdapter extends PagedListAdapter<Datum,UserPagingAdapter.
     }
 
 
-
+    /**
+     *  Callback for calculating the diff between two non-null items in a list.
+     */
     public static final DiffUtil.ItemCallback<Datum> DIFF_CALLBACK =
             new DiffUtil.ItemCallback<Datum>()
             {
@@ -71,6 +76,9 @@ public class UserPagingAdapter extends PagedListAdapter<Datum,UserPagingAdapter.
             };
 
 
+    /**
+     * A view holder for the paging adapter
+     */
     public class UserViewHolder  extends RecyclerView.ViewHolder  {
         public TextView id, name;
         public CircularImageView profileImage;
@@ -83,6 +91,10 @@ public class UserPagingAdapter extends PagedListAdapter<Datum,UserPagingAdapter.
         }
 
 
+        /**
+         * A method to set hte values in the item view
+         * @param datum a object which is used to set the value in the item view
+         */
         void bindTo(Datum datum)
         {
             if (datum!=null){
@@ -90,14 +102,20 @@ public class UserPagingAdapter extends PagedListAdapter<Datum,UserPagingAdapter.
                 Log.d(TAG, "bindTo: ");
                id.setText("Id: "+datum.getId());
               name.setText("Name: "+datum.getFirstName());
+              if (!TextUtils.isEmpty(datum.getAvatar()))
                 Glide.with(context)
-                        .load(datum.getAvatar())
+                        .load(datum.getAvatar()).placeholder(context.getDrawable(R.drawable.ic_user_place_holder))
                         .diskCacheStrategy(DiskCacheStrategy.ALL)
                         .into(profileImage);
+              else
+                  profileImage.setBackgroundDrawable(context.getDrawable(R.drawable.ic_user_place_holder));
             }
 
         }
 
+        /**
+         * A method to invalidate the views of item when the Datum object is null
+         */
         void clear()
         {
             itemView.invalidate();

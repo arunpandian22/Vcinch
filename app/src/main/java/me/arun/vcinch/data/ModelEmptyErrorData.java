@@ -5,6 +5,10 @@ package me.arun.vcinch.data;
  * arunsachin222@gmail.com
  * Chennai
  */
+
+/**
+ * A class is created to send as a rxbus event for the Error state and empty state handling
+ */
 public class ModelEmptyErrorData {
     public boolean isError;
    public boolean isProgressbar;

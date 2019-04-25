@@ -18,6 +18,7 @@ import static me.arun.vcinch.utils.AppConstants.NETWORK_STATE_CHANGE_ACTION;
  * Created by Arun Pandian M on 24/April/2019
  * arunsachin222@gmail.com
  * Chennai
+ * A receiver class for the notify the internet changes instantly
  */
 public class NetworkChangeReceiver extends BroadcastReceiver {
 

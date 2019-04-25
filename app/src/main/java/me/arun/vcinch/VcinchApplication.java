@@ -10,6 +10,7 @@ import me.arun.vcinch.utils.RxBusUtil;
  * Created by Arun Pandian M on 23/April/2019
  * arunsachin222@gmail.com
  * Chennai
+ * A application class of the activity. here I defined the object which is has to accessed by all the classes
  */
 public class VcinchApplication extends Application {
     private static VcinchApplication mContext;

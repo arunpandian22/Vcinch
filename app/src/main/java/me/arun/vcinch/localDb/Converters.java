@@ -12,6 +12,9 @@ import java.util.ArrayList;
 
 import me.arun.vcinch.entities.Datum;
 
+/**
+ * A converter class for the array list to string and string to array list. because room db doesn't support list fiels
+ */
 public class Converters {
     @TypeConverter
     public static ArrayList<Datum> fromString(String value) {

@@ -12,9 +12,11 @@ import android.graphics.drawable.BitmapDrawable;
 import android.util.AttributeSet;
 import android.view.View;
 import android.widget.ImageView;
-
 import androidx.appcompat.widget.AppCompatImageView;
 
+/**
+ * A custom view to show the image in circular format
+ */
 public class CircularImageView extends AppCompatImageView {
 
     private int borderWidth = 1;

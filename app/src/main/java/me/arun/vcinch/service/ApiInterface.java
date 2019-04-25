@@ -21,6 +21,12 @@ public interface ApiInterface {
      * @return response of the API call
      */
 
+    /**
+     * A API call for the  get the users list
+     * @param url a endpoint of the url
+     * @param page a pagenumber for the users list
+     * @return it returns the userslist response  or appropriate error to the single observer callbacks
+     */
     @Headers({"Accept: application/json"})
     @GET
     Single<UserList> getUserList(@Url String url, @Query("page") int page);

@@ -15,6 +15,8 @@ import me.arun.vcinch.userModule.adapter.ItemDataSourceFactory;
  * Created by Arun Pandian M on 23/April/2019
  * arunsachin222@gmail.com
  * Chennai
+ * A view model for the UsersList activity.
+ * A view model is normally responsible for preparing data and managing the data for activity
  */
 public class UserListViewModel  extends AndroidViewModel {
 

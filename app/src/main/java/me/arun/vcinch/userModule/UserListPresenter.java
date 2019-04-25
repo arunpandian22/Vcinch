@@ -13,6 +13,7 @@ import me.arun.vcinch.service.Api;
  * Created by Arun Pandian M on 23/April/2019
  * arunsachin222@gmail.com
  * Chennai
+ * A class created to act as a presenter for the Activity
  */
 public class UserListPresenter implements UserListContractor.Presenter {
     private UserListContractor.View view;

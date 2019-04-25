@@ -11,6 +11,9 @@ import com.google.gson.annotations.SerializedName;
 
 import me.arun.vcinch.localDb.Converters;
 
+/**
+ * A Model class for the UserList table
+ */
 @Entity
 public class UserList {
 

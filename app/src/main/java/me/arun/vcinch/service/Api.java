@@ -5,11 +5,8 @@ import com.jakewharton.retrofit2.adapter.rxjava2.RxJava2CallAdapterFactory;
 import java.io.File;
 import java.io.IOException;
 import java.util.concurrent.TimeUnit;
-
 import me.arun.vcinch.BuildConfig;
 import me.arun.vcinch.VcinchApplication;
-import me.arun.vcinch.userModule.cachingUtils.GsonCacheableConverter;
-import me.arun.vcinch.userModule.cachingUtils.GsonResponseListener;
 import okhttp3.Cache;
 import okhttp3.Interceptor;
 import okhttp3.OkHttpClient;
@@ -22,13 +19,14 @@ import retrofit2.converter.gson.GsonConverterFactory;
  * Created by Arun Pandian M on 23/April/2019
  * arunsachin222@gmail.com
  * Chennai
+ * A class created to make Api calls comfortably from across the app
  */
 public class Api {
     private static Api instance = null;
     Retrofit retrofit = null;
     // Keep your services here, build them in buildRetrofit method later
     private ApiInterface apiInterface;
-   public  Context context;
+    public  Context context;
 
    String TAG="Api";
 
@@ -51,18 +49,19 @@ public class Api {
     }
 
 
-
-
-
+    /**
+     * A method to build the retrofit object with  default client setup
+     * @param baseUrl base url of the server
+     */
     private void buildRetrofit(String baseUrl) {
 
         Log.d(TAG, "buildRetrofit: ");
         //setup cache
 
         OkHttpClient okHttpClient = new OkHttpClient.Builder()
-                .connectTimeout(90, TimeUnit.SECONDS)
-                .readTimeout(90, TimeUnit.SECONDS)
-                .writeTimeout(90, TimeUnit.SECONDS)
+                .connectTimeout(60, TimeUnit.SECONDS)
+                .readTimeout(60, TimeUnit.SECONDS)
+                .writeTimeout(60, TimeUnit.SECONDS)
                 .addNetworkInterceptor(new NetworkConnectionInterceptor())
                 .build();
 

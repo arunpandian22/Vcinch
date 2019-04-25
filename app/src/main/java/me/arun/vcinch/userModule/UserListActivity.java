@@ -6,6 +6,8 @@ import androidx.lifecycle.ViewModelProviders;
 import androidx.paging.PagedList;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
+import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
+
 import android.content.IntentFilter;
 import android.net.ConnectivityManager;
 import android.os.Bundle;
@@ -28,15 +30,20 @@ import me.arun.vcinch.entities.Datum;
 import me.arun.vcinch.entities.UserList;
 import me.arun.vcinch.userModule.adapter.UserPagingAdapter;
 import me.arun.vcinch.userModule.adapter.UsersAdapter;
+import me.arun.vcinch.utils.AppConstants;
 import me.arun.vcinch.utils.networkreceiver.NetworkChangeReceiver;
 
+/**
+ * a Activity created to show the users list in the UserListActivity
+ */
 public class UserListActivity extends AppCompatActivity implements UserListContractor.View {
 
     private UserListViewModel viewModel;
     private UserListPresenter userListPresenter;
     String TAG = "UserListActivity";
-    RelativeLayout rlInternetStatus;
-    TextView tvInternetStatus;
+    RelativeLayout rlInternetStatus,rlEmptyState;
+    TextView tvInternetStatus,tvError,tvErrorDes;
+    SwipeRefreshLayout srUserList;
     RecyclerView recyclerView;
     UsersAdapter usersAdapter;
     ProgressBar progressBar;
@@ -44,6 +51,7 @@ public class UserListActivity extends AppCompatActivity implements UserListContr
     CompositeDisposable compositeDisposable=new CompositeDisposable();
     NetworkChangeReceiver networkChangeReceiver=new NetworkChangeReceiver();
     boolean isFromNointernet=false;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -65,9 +73,13 @@ public class UserListActivity extends AppCompatActivity implements UserListContr
                         isProgressBarShow(true);
                     else
                         isProgressBarShow(false);
+
+                    if (((ModelEmptyErrorData) o).isError){
+                        setEmptyState(true,((ModelEmptyErrorData) o).Error);
+                    }else
+                        setEmptyState(false,((ModelEmptyErrorData) o).Error);
                 }
-                else{
-                }
+
             }
         }));
 
@@ -100,18 +112,28 @@ public class UserListActivity extends AppCompatActivity implements UserListContr
         if (progressBar != null) {
             if (isShow)
                 progressBar.setVisibility(View.VISIBLE);
-            else
+            else {
                 progressBar.setVisibility(View.GONE);
+                if (srUserList!=null && srUserList.isRefreshing())
+                    srUserList.setRefreshing(false);
+            }
         }
 
     }
 
 
+    /**
+     * A method to initialize the all the view objects which are used in this current activity
+     */
     public void uiInitialization() {
         recyclerView = findViewById(R.id.rvUsersList);
         rlInternetStatus = findViewById(R.id.rlInternetStatus);
         tvInternetStatus = findViewById(R.id.tvInternetStatus);
         progressBar = findViewById(R.id.pbUserList);
+        rlEmptyState=findViewById(R.id.rlEmptyState);
+        tvError=findViewById(R.id.tvError);
+        tvErrorDes=findViewById(R.id.tvErrorDescription);
+        srUserList=findViewById(R.id.srUserList);
         RecyclerView.LayoutManager llm = new LinearLayoutManager(this);
         recyclerView.setLayoutManager(llm);
         viewModel = ViewModelProviders.of(this).get(UserListViewModel.class);
@@ -127,6 +149,12 @@ public class UserListActivity extends AppCompatActivity implements UserListContr
             }
         });
 
+        srUserList.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
+            @Override
+            public void onRefresh() {
+                viewModel.refresh();
+            }
+        });
         recyclerView.setAdapter(adapter);
     }
 
@@ -174,7 +202,42 @@ public class UserListActivity extends AppCompatActivity implements UserListContr
             }
 
         }
+    }
 
-
+    /**
+     * A method to show or hide the empty and error state
+     * @param isShowErrorstate a boolean values to show error content
+     * @param error a string value of the error state
+     */
+    public void setEmptyState(boolean isShowErrorstate,final String error)
+    {
+        if (isShowErrorstate) {
+            if (recyclerView!=null&&recyclerView.getVisibility()==View.VISIBLE)
+            recyclerView.setVisibility(View.GONE);
+            if (rlEmptyState!=null&& rlEmptyState.getVisibility()==View.GONE)
+                rlEmptyState.setVisibility(View.VISIBLE);
+            switch (error){
+                case  AppConstants.NETWORK_FAILURE:
+                    tvError.setText(getResources().getText(R.string.oops));
+                    tvErrorDes.setText(getResources().getText(R.string.noInterConnection));
+                    break;
+                case  AppConstants.EMPTY_DATA:
+                    tvError.setText(getResources().getText(R.string.no_content_yet));
+                    tvErrorDes.setText(getResources().getText(R.string.pleaseJoin));
+                    break;
+                case  AppConstants.API_FAILURE:
+                    tvError.setText(getResources().getText(R.string.sorry));
+                    tvErrorDes.setText(getResources().getText(R.string.something_went_wrong));
+                    break;
+                case AppConstants.NO_OFFLINE:
+                    tvError.setText(getResources().getText(R.string.no_offline_yet));
+                    tvErrorDes.setText(getResources().getText(R.string.no_offline_data_des));
+            }
+        } else {
+            if (recyclerView!=null&&recyclerView.getVisibility()==View.GONE)
+                recyclerView.setVisibility(View.VISIBLE);
+            if (rlEmptyState!=null&& rlEmptyState.getVisibility()==View.VISIBLE)
+                rlEmptyState.setVisibility(View.GONE);
+        }
     }
 }

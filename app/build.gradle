@@ -1,7 +1,6 @@
 apply plugin: 'com.android.application'
 
 
-
 ext {
     majorVersion = 1
     minorVersion = 0
@@ -14,17 +13,17 @@ ext {
     rxandroidVersion = "2.1.1"
     retrofitVersion = "2.4.0"
     gsonVersion = "2.4.0"
-    retrofitRxjavaAdapterVersion= "1.0.0"
+    retrofitRxjavaAdapterVersion = "1.0.0"
     okHttp = "3.10.0"
-    okHttpUrlVersion= "3.0.1"
+    okHttpUrlVersion = "3.0.1"
     okLoggingInterceptor = "3.9.1"
     supportLibrary = '1.0.0-beta01'
     constraintLayoutVersion = "1.1.3"
-    appCompatVersion="1.0.2"
+    appCompatVersion = "1.0.2"
     daggerVersion = '2.21'
     intuiteVersion = "1.0.6"
     glideVersion = '4.7.0'
-    liveDataVersion="2.1.0-alpha04"
+    liveDataVersion = "2.1.0-alpha04"
     rxBinding = "3.0.0-alpha2"
 }
 
@@ -78,6 +77,8 @@ dependencies {
 
     //room
     implementation "androidx.room:room-runtime:$roomVersion"
+    implementation 'androidx.appcompat:appcompat:1.0.2'
+    implementation 'androidx.constraintlayout:constraintlayout:1.1.3'
     annotationProcessor "androidx.room:room-compiler:$roomAnnotationVersion"
     testImplementation "androidx.room:room-testing:$roomAnnotationVersion"
 
@@ -88,8 +89,6 @@ dependencies {
 
     //paging library
     implementation 'android.arch.paging:runtime:1.0.1'
-
-
 
 
     // Dagger dependencies

@@ -4,6 +4,11 @@ import android.content.Context;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 
+
+/**
+ * A class is created to check the internet status
+ */
+
 public class NetworkHelper {
 
     public NetworkHelper() {

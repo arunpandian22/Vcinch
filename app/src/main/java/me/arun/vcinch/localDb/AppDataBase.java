@@ -18,6 +18,9 @@ import me.arun.vcinch.localDb.dao.UserListDao;
  * Chennai
  */
 
+/**
+ * A abstract class is created get the Datbase instance
+ */
 @Database(entities = {UserList.class, Datum.class}, version = 1, exportSchema = false)
 @TypeConverters({Converters.class})
 public abstract class AppDataBase extends RoomDatabase {
