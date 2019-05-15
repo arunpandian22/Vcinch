@@ -7,10 +7,8 @@ import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.text.TextUtils;
 import android.util.Log;
-
 import me.arun.vcinch.VcinchApplication;
 import me.arun.vcinch.userModule.UserListActivity;
-
 import static me.arun.vcinch.utils.AppConstants.IS_CONNECTION_AVAILABLE;
 import static me.arun.vcinch.utils.AppConstants.NETWORK_STATE_CHANGE_ACTION;
 

@@ -1,10 +1,8 @@
 package me.arun.vcinch.di.module;
-
 import android.app.Application;
 import android.content.Context;
 import android.graphics.Color;
 import android.util.Log;
-
 import dagger.Module;
 import dagger.Provides;
 import me.arun.vcinch.VcinchApplication;

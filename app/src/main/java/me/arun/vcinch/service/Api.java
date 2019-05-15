@@ -55,7 +55,7 @@ public class Api {
      */
     private void buildRetrofit(String baseUrl) {
 
-        Log.d(TAG, "buildRetrofit: ");
+//        Log.d(TAG, "buildRetrofit: ");
         //setup cache
 
         OkHttpClient okHttpClient = new OkHttpClient.Builder()
